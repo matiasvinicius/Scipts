@@ -1,2 +1,2 @@
-# exercicios-faculdade
-Alguns algoritmos desenvolvidos durante o curso de Sistemas de Informação
+# Scripts
+Scripts de propósito geral desenvolvidos nesses anos.
