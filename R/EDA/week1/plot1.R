@@ -56,6 +56,22 @@ plot(data$Global_active_power~data$DateTime,
 dev.off()
 message('plot2.png saved on directory images')
 
+png('images/plot3.png')
+plot(data$Sub_metering_1~data$DateTime,
+     type='l',
+     ylab = 'Energy sub metering',
+     xlab= '',
+     main= '')
+lines(data$Sub_metering_2~data$DateTime, col='red')
+lines(data$Sub_metering_3~data$DateTime, col='blue')
+legend('topright', legend=c('Sub_metering_1', 'Sub_metering_2', 'Sub_metering_3'),
+       col=c('black', 'red', 'blue'), lty=1)
+dev.off()
+message('plot3.png saved on directory images')
+
+png('images/plot4.png')
+dev.off()
+message('plot4.png saved on directory images')
 
 
 time_spent <- Sys.time() - time_begin
