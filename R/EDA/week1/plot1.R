@@ -16,7 +16,7 @@ if (!dir.exists('assets')) {
   message('Data downloaded at directory assets')
 }
 
-#Cleannig the data
+#Reading and cleannig the data
 message('Reading the data from directory assets')
 data <- read.delim(file='assets/data.txt', sep=';')
 data <- as_tibble(data)
@@ -34,6 +34,29 @@ data <- data %>%
          Sub_metering_2 = sapply(Sub_metering_2, as.integer),
          Sub_metering_3 = sapply(Sub_metering_3, as.integer))
 
+if (!dir.exists('images')) {
+  message('Creating directory images')
+  dir.create('images')
+}
+
+png('images/plot1.png')
+hist(data$Global_active_power,
+     col='red',
+     xlab = 'Global Active Power (kilowatts)',
+     main= 'Global Active Power')
+dev.off()
+message('plot1.png saved on directory images')
+
+png('images/plot2.png')
+plot(data$Global_active_power~data$DateTime,
+     type= 'l',
+     ylab = 'Global Active Power (kilowatts)',
+     xlab= '',
+     main= '')
+dev.off()
+message('plot2.png saved on directory images')
+
+
+
 time_spent <- Sys.time() - time_begin
 message('Time spent: ', round(time_spent) , ' seconds')
-print(data)
