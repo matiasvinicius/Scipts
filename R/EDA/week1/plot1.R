@@ -5,15 +5,17 @@ library(stringr)
 
 time_begin <- Sys.time()
 #Getting the data
-if (!dir.exists('assets')) {
-  message('Creating directory assets')
-  dir.create('assets')
+if (!file.exists('assets/data.txt')) {
+  if(!dir.exists('assets')) {
+    message('Creating directory assets')
+    dir.create('assets')
+  }
   url <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
   download.file(url, destfile = "assets/data.zip")
   unzip('assets/data.zip', 'household_power_consumption.txt')
   file.remove('assets/data.zip')
   file.rename(from='household_power_consumption.txt',to='assets/data.txt')
-  message('Data downloaded at directory assets')
+  message('Data downloaded in directory assets')
 }
 
 #Reading and cleannig the data
@@ -45,7 +47,7 @@ hist(data$Global_active_power,
      xlab = 'Global Active Power (kilowatts)',
      main= 'Global Active Power')
 dev.off()
-message('plot1.png saved on directory images')
+message('plot1.png saved in directory images')
 
 png('images/plot2.png')
 plot(data$Global_active_power~data$DateTime,
@@ -54,7 +56,7 @@ plot(data$Global_active_power~data$DateTime,
      xlab= '',
      main= '')
 dev.off()
-message('plot2.png saved on directory images')
+message('plot2.png saved in directory images')
 
 png('images/plot3.png')
 plot(data$Sub_metering_1~data$DateTime,
@@ -67,11 +69,34 @@ lines(data$Sub_metering_3~data$DateTime, col='blue')
 legend('topright', legend=c('Sub_metering_1', 'Sub_metering_2', 'Sub_metering_3'),
        col=c('black', 'red', 'blue'), lty=1)
 dev.off()
-message('plot3.png saved on directory images')
+message('plot3.png saved in directory images')
 
 png('images/plot4.png')
+par(mfrow=c(2,2))
+with(data, {
+  plot(Global_active_power~DateTime,
+       type= 'l',
+       ylab = 'Global Active Power',
+       xlab= '')
+  
+  plot(Voltage~DateTime, type='l',
+       xlab='datetime')
+  
+  plot(Sub_metering_1~DateTime,
+       type='l',
+       ylab = 'Energy sub metering',
+       xlab= '',
+       main= '')
+  lines(Sub_metering_2~DateTime, col='red')
+  lines(Sub_metering_3~DateTime, col='blue')
+  legend('topright', legend=c('Sub_metering_1', 'Sub_metering_2', 'Sub_metering_3'),
+         col=c('black', 'red', 'blue'), lty=1, bty='n')
+  
+  plot(Global_reactive_power~DateTime, type='l',
+       xlab='datetime')
+})
 dev.off()
-message('plot4.png saved on directory images')
+message('plot4.png saved in directory images')
 
 
 time_spent <- Sys.time() - time_begin
