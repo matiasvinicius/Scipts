@@ -15,13 +15,13 @@ This file contains a presentation of the format of the variables and their possi
 Mean and standard deviation statistics were taken to extract the results. The normalized numerical values (that is, in the range between -1 and 1) were extracted from the accelerometer or gyroscope of the smartphone for the axes of three-dimensional space (X, Y and Z). Specifics about the measurement calculations can be collected from the [original repository](https://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones).
 Briefly, the attributes follow the nomenclature patterns below, varying the information contained according to the purpose of the variable:
 
-- The prefix `t` refers to the measurement of time (at a constant rate of 50 Hz) and the prefix` f` to the frequency (by Fast Fourier Transform);
-- `Body` are measures on the body and` Gravity` on the acceleration of gravity;
-- `Acc` refers to the measurements of the accelerometer and` Gyro` to the measurements of the gyroscope;
+- The prefix `t` refers to the measurement of time (at a constant rate of 50 Hz) and the prefix `f` to the frequency (by Fast Fourier Transform);
+- `Body` are measures on the body and `Gravity` on the acceleration of gravity;
+- `Acc` refers to the measurements of the accelerometer and `Gyro` to the measurements of the gyroscope;
 - `Jerk` are signs of pushing / jerk;
 - `Mag` is the magnitude of the X, Y and Z axes according to the Euclidean norm;
-- `Mean` are averages,` MeanFreq` average frequencies and `Std` standard deviations;
-- The suffixes `X`,` Y` and `Z` refer to the axis of the three-dimensional space in which the variable was collected.
+- `Mean` are averages, `MeanFreq` average frequencies and `Std` standard deviations;
+- The suffixes `X`, `Y` and `Z` refer to the axis of the three-dimensional space in which the variable was collected.
 
 The attributes are as follows:
 

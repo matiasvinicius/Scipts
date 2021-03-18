@@ -46,7 +46,9 @@ run_analysis <- function() {
   features_names <- str_subset(features$V2[features_indexes], 
                                features_pattern) %>%
     str_remove_all("\\(\\)") %>%
-    str_replace_all("-", "_")
+    str_remove_all("-") %>%
+    str_replace_all("mean", "Mean") %>%
+    str_replace_all("std", "Std")
     
   message("Extracting test data")
   folder_path <- "UCI HAR Dataset/test/"
