@@ -1,9 +1,9 @@
 # Code Book
-Este arquivo contém uma apresentação do formato das variáveis e seus possíveis valores
+This file contains a presentation of the format of the variables and their possible values.
 
-## Identificadores
-- `subject`: Id do sujeito que os dados se referem. São 30 pessoas no estudo, logo, os valores inteiros possíveis variam de 1 à 30.
-- `status`: Status de atividade que a pessoa tinha quando as medidas foram coletadas. Existem 6 valores possíveis (note que as strings são autoexplicativas):
+## Identifiers
+- `subject`: Id of the subject that the data refer to. There are 30 people in the study, so the possible whole values range from 1 to 30.
+- `status`: Activity status that the person had when measurements were collected. There are 6 possible values (note that strings are self-explanatory):
   - WALKING
   - WALKING_UPSTAIRS
   - WALKING_DOWNSTAIRS
@@ -11,18 +11,19 @@ Este arquivo contém uma apresentação do formato das variáveis e seus possív
   - STANDING
   - LAYING
 
-## Estatísticas
-Foram tomadas as estatísticas de média e desvio padrão para extrair os resultados. Os valores numéricos normalizados (ou seja, no intervalo entre -1 e 1) foram extraidos o acelerometro ou giroscópio do smartphone para os eixos do espaço tridimensional (X, Y e Z). Especifidades sobre os cálculos das medidas podem ser coletados do [repositório original](https://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones).
-Resumidamente, os atributos seguem os padrões de nomenclatura abaixo, variando as informações contidas de acordo com o objetivo da variável: 
-- O prefixo `t` refere-se à medida de tempo (em taxa constante de 50 Hz) e o prefixo `f` à frequência (pela Fast Fourier Transform);
-- `Body` são medidas sobre o corpo e `Gravity` sobre a aceleração da gravidade;
-- `Acc` faz referência à medidas do acelerômetro e `Gyro` às medidas do giroscópio;
-- `Jerk` são sinais de empurrão;
-- `Mag` é a maginutde dos eixos X, Y e Z pela norma euclidiana;
-- `Mean` são médias, `MeanFreq` médias de frequência e `Std` desvios padrão;
-- Os sufixos `X`, `Y` e `Z` referêm-se ao eixo do espaço tridimensional que a variável foi coletada.
+## Statistics
+Mean and standard deviation statistics were taken to extract the results. The normalized numerical values (that is, in the range between -1 and 1) were extracted from the accelerometer or gyroscope of the smartphone for the axes of three-dimensional space (X, Y and Z). Specifics about the measurement calculations can be collected from the [original repository](https://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones).
+Briefly, the attributes follow the nomenclature patterns below, varying the information contained according to the purpose of the variable:
 
-Os atributos são os seguintes:
+- The prefix `t` refers to the measurement of time (at a constant rate of 50 Hz) and the prefix` f` to the frequency (by Fast Fourier Transform);
+- `Body` are measures on the body and` Gravity` on the acceleration of gravity;
+- `Acc` refers to the measurements of the accelerometer and` Gyro` to the measurements of the gyroscope;
+- `Jerk` are signs of pushing / jerk;
+- `Mag` is the magnitude of the X, Y and Z axes according to the Euclidean norm;
+- `Mean` are averages,` MeanFreq` average frequencies and `Std` standard deviations;
+- The suffixes `X`,` Y` and `Z` refer to the axis of the three-dimensional space in which the variable was collected.
+
+The attributes are as follows:
 
 - `subject`
 - `status`
@@ -106,5 +107,5 @@ Os atributos são os seguintes:
 - `fBodyBodyGyroJerkMagStd`
 - `fBodyBodyGyroJerkMagMeanFreq`
 
-## Sobre as transformações
-As colunas de estatísticas se diferem dos dados originais pela remoção do `-` e dos `()` para manter a consistência com o resto das strings.
+## About the transformations
+The measurement columns differ from the original data by removing `-` and `()` to maintain consistency with the rest of the strings.
