@@ -25,8 +25,6 @@ Briefly, the attributes follow the nomenclature patterns below, varying the info
 
 The attributes are as follows:
 
-- `subject`
-- `status`
 - `tBodyAccMeanX`
 - `tBodyAccMeanY`
 - `tBodyAccMeanZ`
