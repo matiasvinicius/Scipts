@@ -16,11 +16,10 @@ download_data <- function() {
   }
 }
 
-# Have total emissions from PM2.5 decreased in the United States from 1999 to 
-# 2008? Using the base plotting system, make a plot showing the total 
-# PM2.5 emission from all sources for each of the years 1999, 2002, 2005, 
-# and 2008.
-plot1 <- function() {
+# Have total emissions from PM2.5 decreased in the Baltimore City, Maryland 
+# (fips == "24510") from 1999 to 2008? Use the base plotting system 
+# to make a plot answering this question.
+plot2 <- function() {
   download_data()
   
   if (!dir.exists("images")){
@@ -30,18 +29,27 @@ plot1 <- function() {
   
   message("Loading the rds files")
   summary_SCC <- readRDS("./data/summary_SCC.rds") %>%
+    filter(fips == "24510") %>%
     select(Emissions, year) %>%
     group_by(year) %>%
     summarize(Emissions = sum(Emissions))
+    
+  png('images/plot2.png')
   
-  png('images/plot1.png')
-  barplot(summary_SCC$Emissions/10^6 ~ summary_SCC$year,
+  plot(summary_SCC$Emissions ~ summary_SCC$year,
+       type = "c",
+       xaxt= 'n',
        xlab = "Year",
-       ylab = "Total PM2.5 emissions (millions)",
-       main = "Total PM2.5 emissions decrease (1999-2008)")
+       ylab = "Total PM2.5 emissions",
+       main = "Total PM2.5 emissions in Baltimore City, 
+       Maryland decrease (1999-2008)")
+
+  text(summary_SCC$Emissions ~ summary_SCC$year, 
+       labels = summary_SCC$year, cex=0.9, font=2)
+  
   dev.off()
   
-  message("plot1.png saved in 'images' directory")
+  message("plot2.png saved in 'images' directory")
 }
 
-plot1()
+plot2()
