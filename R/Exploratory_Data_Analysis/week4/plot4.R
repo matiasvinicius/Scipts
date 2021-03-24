@@ -30,11 +30,11 @@ plot4 <- function() {
   
   message("Loading the rds files")
   SCC <- readRDS("./data/SCC.rds")
-  SCC_summary <- readRDS("./data/summary_SCC.rds")
+  NEI <- readRDS("./data/summary_SCC.rds")
 
   SCC_coal <- str_detect(SCC$Short.Name, "coal|Coal")
   SCC_coal <- SCC$SCC[SCC_coal]
-  coal_data <- SCC_summary[SCC_summary$SCC %in% SCC_coal,]
+  coal_data <- NEI[NEI$SCC %in% SCC_coal,]
 
   coal_data <- coal_data %>%
     select(Emissions, year) %>%

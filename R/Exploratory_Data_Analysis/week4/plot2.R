@@ -28,7 +28,7 @@ plot2 <- function() {
   }
   
   message("Loading the rds files")
-  summary_SCC <- readRDS("./data/summary_SCC.rds") %>%
+  NEI <- readRDS("./data/summary_SCC.rds") %>%
     filter(fips == "24510") %>%
     select(Emissions, year) %>%
     group_by(year) %>%
@@ -36,7 +36,7 @@ plot2 <- function() {
     
   png('images/plot2.png')
   
-  plot(summary_SCC$Emissions ~ summary_SCC$year,
+  plot(NEI$Emissions ~ NEI$year,
        type = "c",
        xaxt= 'n',
        xlab = "Year",
@@ -44,8 +44,8 @@ plot2 <- function() {
        main = "Total PM2.5 emissions in Baltimore City, 
        Maryland decrease (1999-2008)")
 
-  text(summary_SCC$Emissions ~ summary_SCC$year, 
-       labels = summary_SCC$year, cex=0.9, font=2)
+  text(NEI$Emissions ~ NEI$year, 
+       labels = NEI$year, cex=0.9, font=2)
   
   dev.off()
   

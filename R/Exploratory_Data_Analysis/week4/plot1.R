@@ -29,15 +29,15 @@ plot1 <- function() {
   }
   
   message("Loading the rds files")
-  summary_SCC <- readRDS("./data/summary_SCC.rds") %>%
+  NEI <- readRDS("./data/summary_SCC.rds") %>%
     select(Emissions, year) %>%
     group_by(year) %>%
     summarize(Emissions = sum(Emissions))
   
   png('images/plot1.png')
-  barplot(summary_SCC$Emissions/10^6 ~ summary_SCC$year,
+  barplot(NEI$Emissions ~ NEI$year,
        xlab = "Year",
-       ylab = "Total PM2.5 emissions (millions)",
+       ylab = "Total PM2.5 emissions",
        main = "Total PM2.5 emissions decrease (1999-2008)")
   dev.off()
   

@@ -20,32 +20,36 @@ download_data <- function() {
 
 # How have emissions from motor vehicle sources changed from 
 # 1999-2008 in Baltimore City?
-download_data()
-
-if (!dir.exists("images")){
-  message("Creating folder 'images'")
-  dir.create("images")
+plot6 <- function() {
+  download_data()
+  
+  if (!dir.exists("images")){
+    message("Creating folder 'images'")
+    dir.create("images")
+  }
+  
+  message("Loading the rds files")
+  NEI <- readRDS("./data/summary_SCC.rds") %>%
+    filter(type == "ON-ROAD",
+           fips %in% c("24510","06037")) %>%
+    select(Emissions, year, fips) %>%
+    group_by(fips, year) %>%
+    summarise(Emissions = sum(Emissions), .groups = "drop")
+  
+  NEI$fips <- mapvalues(NEI$fips, 
+                        from = c("24510","06037"),
+                        to = c("Baltimore City", "Los Angeles, California"))
+  
+  ggplot(data = NEI, aes(x = as.factor(year), y = Emissions)) + 
+    geom_bar(stat = "identity") +
+    facet_wrap(. ~ fips) +
+    ylab("Emissions (tons)") + 
+    xlab("Year") + 
+    ggtitle("Emissions from motor vehicle sources (1999-2008)") + 
+    theme(plot.title = element_text(hjust = 0.5))
 }
 
-message("Loading the rds files")
-NEI <- readRDS("./data/summary_SCC.rds") %>%
-  filter(type == "ON-ROAD",
-         fips %in% c("24510","06037")) %>%
-  select(Emissions, year, fips) %>%
-  group_by(fips, year) %>%
-  summarise(Emissions = sum(Emissions), .groups = "drop")
-
-NEI$fips <- mapvalues(NEI$fips, 
-                      from = c("24510","06037"),
-                      to = c("Baltimore City", "Los Angeles, California"))
-
 png('images/plot6.png')
-ggplot(data = NEI, aes(x = as.factor(year), y = Emissions)) + 
-  geom_bar(stat = "identity") +
-  facet_wrap(. ~ fips) +
-  ylab("Emissions (tons)") + 
-  xlab("Year") + 
-  ggtitle("Emissions from motor vehicle sources (1999-2008)") + 
-  theme(plot.title = element_text(hjust = 0.5))
+plot6()
 dev.off()
 message("plot6.png saved in 'images' directory")

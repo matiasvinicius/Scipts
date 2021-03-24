@@ -28,25 +28,22 @@ plot5 <- function() {
   }
   
   message("Loading the rds files")
-  summary_SCC <- readRDS("./data/summary_SCC.rds") %>%
+  NEI <- readRDS("./data/summary_SCC.rds") %>%
     filter(type == "ON-ROAD",
            fips == 24510) %>%
     select(Emissions, year) %>%
     group_by(year) %>%
     summarize(Emissions = sum(Emissions))
   
-  png('images/plot5.png')
-  
-  ggplot(data = summary_SCC, aes(x = as.factor(year), y = Emissions)) + 
+  ggplot(data = NEI, aes(x = as.factor(year), y = Emissions)) + 
     geom_bar(stat = "identity") + 
-    ylab("Emissions (tons)") + 
+    ylab("Emissions") + 
     xlab("Year") + 
-    ggtitle("Emissions from motor vehicle sources (1999–2008) in Baltimore City") + 
+    ggtitle("Emissions from motor vehicle sources (1999-2008) in Baltimore City") + 
     theme(plot.title = element_text(hjust = 0.5))
-  
-  dev.off()
-  
-  message("plot5.png saved in 'images' directory")
 }
 
+png('images/plot5.png')
 plot5()
+dev.off()
+message("plot5.png saved in 'images' directory")

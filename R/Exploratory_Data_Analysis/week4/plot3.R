@@ -45,18 +45,18 @@ plot3 <- function() {
   }
   
   message("Loading the rds files")
-  summary_SCC <- readRDS("./data/summary_SCC.rds") %>%
+  NEI <- readRDS("./data/summary_SCC.rds") %>%
     filter(fips == "24510") %>%
     select(type, Emissions, year) %>%
     group_by(type, year) %>%
     summarize(Emissions = sum(Emissions), .groups = "drop")
   
-  source_types <- unique(summary_SCC$type)
+  source_types <- unique(NEI$type)
   plots <- list()
   
   for (source_type in source_types) {
     message("Creating ", source_type, " plot")
-    plot_data <- summary_SCC %>% 
+    plot_data <- NEI %>% 
       filter(type == source_type) %>%
       filter(year == c(1999, 2008)) %>%
       select(-type)
@@ -73,7 +73,7 @@ plot3 <- function() {
                plots$NONPOINT,
                plots$`ON-ROAD`,
                plots$POINT,
-               top = "Increase in POINT source type emissions (1999-2008)")
+               top = "Increase in POINT source type emissions (1999 and 2008)")
   dev.off()
   
   message("plot3.png saved in 'images' directory")
