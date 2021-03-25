@@ -36,67 +36,14 @@ data <- data %>%
          Sub_metering_2 = sapply(Sub_metering_2, as.integer),
          Sub_metering_3 = sapply(Sub_metering_3, as.integer))
 
-if (!dir.exists('images')) {
-  message('Creating directory images')
-  dir.create('images')
-}
-
-png('images/plot1.png')
-hist(data$Global_active_power,
-     col='red',
-     xlab = 'Global Active Power (kilowatts)',
-     main= 'Global Active Power')
-dev.off()
-message('plot1.png saved in directory images')
-
-png('images/plot2.png')
+#Creating Plot2
+png('plot2.png', width = 480, height = 480)
 plot(data$Global_active_power~data$DateTime,
      type= 'l',
      ylab = 'Global Active Power (kilowatts)',
-     xlab= '',
-     main= '')
+     xlab= '')
 dev.off()
-message('plot2.png saved in directory images')
-
-png('images/plot3.png')
-plot(data$Sub_metering_1~data$DateTime,
-     type='l',
-     ylab = 'Energy sub metering',
-     xlab= '',
-     main= '')
-lines(data$Sub_metering_2~data$DateTime, col='red')
-lines(data$Sub_metering_3~data$DateTime, col='blue')
-legend('topright', legend=c('Sub_metering_1', 'Sub_metering_2', 'Sub_metering_3'),
-       col=c('black', 'red', 'blue'), lty=1)
-dev.off()
-message('plot3.png saved in directory images')
-
-png('images/plot4.png')
-par(mfrow=c(2,2))
-with(data, {
-  plot(Global_active_power~DateTime,
-       type= 'l',
-       ylab = 'Global Active Power',
-       xlab= '')
-  
-  plot(Voltage~DateTime, type='l',
-       xlab='datetime')
-  
-  plot(Sub_metering_1~DateTime,
-       type='l',
-       ylab = 'Energy sub metering',
-       xlab= '',
-       main= '')
-  lines(Sub_metering_2~DateTime, col='red')
-  lines(Sub_metering_3~DateTime, col='blue')
-  legend('topright', legend=c('Sub_metering_1', 'Sub_metering_2', 'Sub_metering_3'),
-         col=c('black', 'red', 'blue'), lty=1, bty='n')
-  
-  plot(Global_reactive_power~DateTime, type='l',
-       xlab='datetime')
-})
-dev.off()
-message('plot4.png saved in directory images')
+message('plot2.png saved in the current directory')
 
 
 time_spent <- Sys.time() - time_begin
