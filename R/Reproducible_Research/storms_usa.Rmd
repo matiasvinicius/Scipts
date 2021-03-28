@@ -1,0 +1,63 @@
+---
+title: "Analysis of severe weather events in the united states between the years 1950 and 2011"
+author: "MATIAS, V. A."
+date: "28/03/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1. Synopsis
+<p> This is the final project of the 
+[Reproducible Research Course](https://www.coursera.org/learn/reproducible-research) 
+offered by Johns Hopkins University on the 
+[Coursera](https://www.coursera.org/) platform.
+<p> This paper will present an analysis of climate events based on the U.S. 
+National Oceanic and Atmospheric Administration's (NOAA) storm database.
+<p> The programming language R will be used as the basis for all the analysis 
+to be presented, this document being developed with R markdown (Rmd).
+
+## 1.1 Data
+<p> The available data are in a compressed CSV file for type .bz2, 
+resulting in a 42Mb file.
+
+<p> Data: [Storm Data](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2)
+<p> Documentation: [National Weather Service Storm Data Documentation](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf)
+<p> FAQ: [National Climatic Data Center Storm Events FAQ](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf)
+
+# 2. Data Processing
+<p> This section covers the techniques used in the collection and processing of data
+
+## 2.1 Required libraries
+<p> Before starting the analysis, some packages will be needed to facilitate development:
+
+* dplyr: To facilitate data manipulation
+* ggplot2: To create the graphics 
+```{r warning=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+## 2.2 Geting the data
+<p> The project requires that the compressed CSV files be in the directory 
+where the analysis will be performed. This step can be performed by the user 
+himself, downloading the file and placing it in the analysis directory, or 
+by the code below.
+```{r eval=FALSE}
+# Optional step
+data_url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+download.file(data_url, destfile = "storm_data.csv.bz2")
+```
+
+## 2.3 Loading the data
+<p> Now the downloaded file with the name _storm_data.csv.bz2_ will be stored in
+memory. Note that this is a large file when uncompressed, requiring almost 500Mb
+to allocate it in RAM.
+```{r cache=TRUE}
+weather <- read.csv("storm_data.csv.bz2")
+object.size(weather)
+```
+
+
