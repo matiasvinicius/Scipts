@@ -1,0 +1,58 @@
+---
+title: "Motor Trend"
+author: "MATIAS, V. A."
+date: "30/03/2021"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Summary
+<p> This relatory is the final project of the 
+[Regression Models Course](https://www.coursera.org/learn/regression-models) 
+offered by Johns Hopkings  University in the 
+[Coursera Plataform](https://www.coursera.org/)
+
+<p> The objective of the paper is review a collection of cars and explore 
+the relationship that explains in a quantitative way the miles per gallon spent.
+To do this, will be used strategies of Exploratory Data Analysis and Regression 
+Models.
+
+## Data
+<p> The data set used can be retrieved in the base R software by the lines 
+below:
+```{r warning=FALSE, message=FALSE}
+library(dplyr)
+
+data("mtcars")
+mtcars <- as_tibble(mtcars)
+
+mtcars
+```
+
+<p> So we have 32 observations with 11 numeric attributes for each. Let's see 
+the correlation between the attributes.
+```{r warning=FALSE, message=FALSE}
+library(corrplot)
+
+corrplot(cor(mtcars), 
+         method = "color",
+         type = "upper", 
+         addCoef.col = TRUE,
+         diag = FALSE,
+         number.cex = 0.7)
+```
+<p> The figure shows that mpg has a strong negative correlation for cyl, disp,
+hp and wt (more intense red). Positive correlation can be found, mainly,
+with drat, vs and am. This variables can be
+
+## Trends
+
+
+## Apendix
+<p> mtcars attributes
