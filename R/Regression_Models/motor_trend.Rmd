@@ -51,18 +51,21 @@ corrplot(cor(mtcars),
 hp and wt (more intense red). Positive correlation can be found, mainly,
 with drat, vs and am.
 
-## Trends
+## Trends: MPG and Transmission
 <p> This paper analyzes the available data and answer two questions with 
-regression models. The two topics below treat the questions.
+regression models. The topics below treat the questions to then answer them.
+To keep in mind, the two questions are "Is an automatic or manual transmission 
+better for MPG?" and "Quantify the MPG difference between automatic and manual 
+transmissions"
 
-### Automatic or manual?
+### Simple Linear Regression
 <p> We want to understand if has one trend to milles per gallon (mpg) 
 when compared to cars that has automatic transmission and those how has manual 
 transmission. The mtcars data set utilizes the value 0 to cars with automatic 
 transmission and the value 1 to manual transmission cars in the column _am_.
 
 <p> First, one boxplot of mpg X automatic/manual
-```{r}
+```{r warning=FALSE}
 library(ggplot2)
 
 mtcars$am <- if_else(mtcars$am == 0, true = "auto", false = "manual")
@@ -77,7 +80,7 @@ ggplot(mtcars) +
 <p> By the boxplot above, automatic transmission seems have less mpg spent than 
 manual transmissions, being better. 
 
-<p> Let's see what a imple linae regression says about the relationship. Here 
+<p> Let's see what a simple linear regression says about the relationship. Here 
 will use mpg as outcome and am as explanatory variable.
 ```{r}
 fit <- lm(mpg ~ factor(am), data = mtcars)
@@ -113,7 +116,31 @@ is not a good idea to generalize the model, being that we have more variables
 to increase the power of explanation of the model, even with a small number of 
 observations.
 
+<p> *So*, we can't assume that automatic transmissions is better than manual 
+transmissions, being that round 33% of the data can be explained by this
+relationship.
 
+
+### Multivariable Linear Regression
+<p> How one explanatory variable can't bring relevant information, we will
+analyze one new model with more than one explanatory variable. 
+
+<p> We'll create three models, the first with _am_ and the 4 variables 
+with more correlation with mpg
+<p> The second with _am_ and two variables with high correlation with _mpg_ 
+and lower correlation between them (that is, explain mpg, but tries to reduce
+the correlation between explanatory variables) 
+<p> The third with all variables
+```{r}
+high_cor_fit <- lm(mpg ~ factor(am) + cyl + wt + disp + hp, data = mtcars)
+some_high_cor_fit <- lm(mpg ~ factor(am) + cyl + wt, data = mtcars)
+all_fit <- lm(mpg ~., data = mtcars)
+```
+
+<p> Doing the Analysis of Variance (ANOVA)
+```{r}
+anova(fit, all_fit, high_cor_fit, some_high_cor_fit)
+```
 
 ## Apendix
 <p> mtcars attributes
