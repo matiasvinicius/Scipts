@@ -49,10 +49,82 @@ corrplot(cor(mtcars),
 ```
 <p> The figure shows that mpg has a strong negative correlation for cyl, disp,
 hp and wt (more intense red). Positive correlation can be found, mainly,
-with drat, vs and am. This variables can be
+with drat, vs and am.
 
 ## Trends
+<p> This paper analyzes the available data and answer two questions with 
+regression models. The two topics below treat the questions.
+
+### Automatic or manual?
+<p> We want to understand if has one trend to milles per gallon (mpg) 
+when compared to cars that has automatic transmission and those how has manual 
+transmission. The mtcars data set utilizes the value 0 to cars with automatic 
+transmission and the value 1 to manual transmission cars in the column _am_.
+
+<p> First, one boxplot of mpg X automatic/manual
+```{r}
+library(ggplot2)
+
+mtcars$am <- if_else(mtcars$am == 0, true = "auto", false = "manual")
+
+ggplot(mtcars) + 
+  geom_boxplot(aes(x = am, y = mpg, group = am)) + 
+  labs(x = "Transmission",
+       y = "Milles per gallon (mpg)",
+       title = "mpg per transmission") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+<p> By the boxplot above, automatic transmission seems have less mpg spent than 
+manual transmissions, being better. 
+
+<p> Let's see what a imple linae regression says about the relationship. Here 
+will use mpg as outcome and am as explanatory variable.
+```{r}
+fit <- lm(mpg ~ factor(am), data = mtcars)
+summary(fit)
+
+```
+<p> There is just two values for x-axis: Automatic or manual.
+The model says that our intercept is 17.147 and the slope is equal to 7.245,
+so, is expected that the values of mpg for automatic transmission be around 
+17.147 $\pm$ 1.125, being this our first factor variable. The cost to change the 
+transmission for the next type (manual) is equal to 7.245, so we increase this
+value from 17.147 and get that the expected value by the regression linear model
+be around 24.392 $\pm$ 1.764 for manual transmission.
+
+<p> Note that we have 30 degrees of freedom , so is better to use a T-test than
+a Z-test, because it's a good approximation to normal curve with a longer tail. 
+The result of t-test results in a P-value very low for manual and automatic 
+transmissions (both smaller than 0.0005).
+
+<p> A model trained with a small number of data has your problems. As we 
+can see, the Residual Standard Error (RSE) is equal to 4.902, what is smaller
+than the slope (big difference between the manual and automatic transmission),
+but is even higher than the standard error of both. This means that not all 
+observations can be well fitted, but is so (as we saw in the p-value) a good
+linear approximation.
+
+<p> The power of explain the data by the model, otherwise, can be analyzed 
+with the value of  Multiple R-squared and Adjusted R-squared, with both with 
+values next to 0.33 (0.3598 to the first and 0.3385 to the second), so,
+the linear model can explain round of one third of the variation in the data.
+This means that _am_ alone can brings some information about the mpg, but
+is not a good idea to generalize the model, being that we have more variables 
+to increase the power of explanation of the model, even with a small number of 
+observations.
+
 
 
 ## Apendix
 <p> mtcars attributes
+[, 1]	mpg	Miles/(US) gallon
+[, 2]	cyl	Number of cylinders
+[, 3]	disp	Displacement (cu.in.)
+[, 4]	hp	Gross horsepower
+[, 5]	drat	Rear axle ratio
+[, 6]	wt	Weight (1000 lbs)
+[, 7]	qsec	1/4 mile time
+[, 8]	vs	Engine (0 = V-shaped, 1 = straight)
+[, 9]	am	Transmission (0 = automatic, 1 = manual)
+[,10]	gear	Number of forward gears
+[,11]	carb	Number of carburetors
