@@ -125,21 +125,28 @@ relationship.
 <p> How one explanatory variable can't bring relevant information, we will
 analyze one new model with more than one explanatory variable. 
 
-<p> We'll create three models, the first with _am_ and the 4 variables 
-with more correlation with mpg
-<p> The second with _am_ and two variables with high correlation with _mpg_ 
-and lower correlation between them (that is, explain mpg, but tries to reduce
-the correlation between explanatory variables) 
-<p> The third with all variables
+<p> First, we need to find the most important variables to put on a new model.
+This can be done using variables with significant correlation with mpg, but 
+well uncorrelated between itselfs. The correlation table can draw some insights 
+to understand the pattern, else can be done a model with all variables and, 
+with him, extract that with lower p-values on t-test.
 ```{r}
-high_cor_fit <- lm(mpg ~ factor(am) + cyl + wt + disp + hp, data = mtcars)
-some_high_cor_fit <- lm(mpg ~ factor(am) + cyl + wt, data = mtcars)
-all_fit <- lm(mpg ~., data = mtcars)
+summary(lm(mpg ~., mtcars))$coefficients
 ```
-
-<p> Doing the Analysis of Variance (ANOVA)
+<p> As we can see, the most influencible variables are wt, qsec and hp (plus 
+am). Now we'll build two models, one with these 4 variables and another without
+hp. They will be compared to the first fit to see if exists some significance 
+adding hp or not.
 ```{r}
-anova(fit, all_fit, high_cor_fit, some_high_cor_fit)
+mult_fit <- lm(mpg ~ factor(am) + wt + qsec, data = mtcars)
+mult_fit_hp <- lm(mpg ~ factor(am) + wt + qsec + hp, data = mtcars)
+
+anova(fit, mult_fit, mult_fit_hp)
+```
+<p> The model without hp has higher F, so lower p-value. Let's show summary of 
+the model:
+```{r}
+summary(mult_fit)
 ```
 
 ## Apendix
