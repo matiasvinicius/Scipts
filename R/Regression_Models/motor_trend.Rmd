@@ -16,146 +16,75 @@ knitr::opts_chunk$set(echo = TRUE)
 <p> This relatory is the final project of the 
 [Regression Models Course](https://www.coursera.org/learn/regression-models) 
 offered by Johns Hopkings  University in the 
-[Coursera Plataform](https://www.coursera.org/)
-
-<p> The objective of the paper is review a collection of cars and explore 
-the relationship that explains in a quantitative way the miles per gallon spent.
-To do this, will be used strategies of Exploratory Data Analysis and Regression 
+[Coursera Plataform](https://www.coursera.org/). The objective of the paper is 
+review a collection of cars and explore the relationship that explains in a 
+quantitative way the miles per gallon spent. To do this, will be used strategies
+of Exploratory Data Analysis and Regression 
 Models.
 
-## Data
-<p> The data set used can be retrieved in the base R software by the lines 
-below:
-```{r warning=FALSE, message=FALSE}
-library(dplyr)
-
-data("mtcars")
-mtcars <- as_tibble(mtcars)
-
-mtcars
-```
-
-<p> So we have 32 observations with 11 numeric attributes for each. Let's see 
-the correlation between the attributes.
-```{r warning=FALSE, message=FALSE}
-library(corrplot)
-
-corrplot(cor(mtcars), 
-         method = "color",
-         type = "upper", 
-         addCoef.col = TRUE,
-         diag = FALSE,
-         number.cex = 0.7)
-```
-<p> The figure shows that mpg has a strong negative correlation for cyl, disp,
-hp and wt (more intense red). Positive correlation can be found, mainly,
-with drat, vs and am.
-
 ## Trends: MPG and Transmission
-<p> This paper analyzes the available data and answer two questions with 
-regression models. The topics below treat the questions to then answer them.
-To keep in mind, the two questions are "Is an automatic or manual transmission 
-better for MPG?" and "Quantify the MPG difference between automatic and manual 
-transmissions"
+<p> The data set used can be retrieved in the base R software by the command 
+`data("mtcars")`. It have 32 observations with 11 numeric attributes for each
+(more information about the dataset and the variables can be found with the 
+command `?mtcars`). This paper analyzes the available data to understand if 
+automatic transmissions are better than manual for mpg and quantify the 
+difference. The answers are retrieved in the Conclusions section.
 
 ### Simple Linear Regression
-<p> We want to understand if has one trend to milles per gallon (mpg) 
-when compared to cars that has automatic transmission and those how has manual 
-transmission. The mtcars data set utilizes the value 0 to cars with automatic 
-transmission and the value 1 to manual transmission cars in the column _am_.
-
-<p> First, one boxplot of mpg X automatic/manual
-```{r warning=FALSE}
-library(ggplot2)
-
-mtcars$am <- if_else(mtcars$am == 0, true = "auto", false = "manual")
-
-ggplot(mtcars) + 
-  geom_boxplot(aes(x = am, y = mpg, group = am)) + 
-  labs(x = "Transmission",
-       y = "Milles per gallon (mpg)",
-       title = "mpg per transmission") +
-  theme(plot.title = element_text(hjust = 0.5))
-```
-<p> By the boxplot above, automatic transmission seems have less mpg spent than 
-manual transmissions, being better. 
-
-<p> Let's see what a simple linear regression says about the relationship. Here 
-will use mpg as outcome and am as explanatory variable.
+<p> Some exploratory analysis about the transmissions shows that automatic 
+transmissions has lower values (apendix, figure 1). To see if this relation 
+follows a pattern, we'll do a simple linear regression with mpg (Miles/US 
+gallon) as outcome and 
+am (transmission) as explanatory variable.
 ```{r}
 fit <- lm(mpg ~ factor(am), data = mtcars)
-summary(fit)
-
+summary(fit)$coefficients
+message("R Squared:", summary(fit)$r.squared, "\nAdjusted R Squared:", 
+        summary(fit)$adj.r.squared)
 ```
-<p> There is just two values for x-axis: Automatic or manual.
-The model says that our intercept is 17.147 and the slope is equal to 7.245,
-so, is expected that the values of mpg for automatic transmission be around 
-17.147 $\pm$ 1.125, being this our first factor variable. The cost to change the 
-transmission for the next type (manual) is equal to 7.245, so we increase this
-value from 17.147 and get that the expected value by the regression linear model
-be around 24.392 $\pm$ 1.764 for manual transmission.
-
-<p> Note that we have 30 degrees of freedom , so is better to use a T-test than
-a Z-test, because it's a good approximation to normal curve with a longer tail. 
-The result of t-test results in a P-value very low for manual and automatic 
-transmissions (both smaller than 0.0005).
-
-<p> A model trained with a small number of data has your problems. As we 
-can see, the Residual Standard Error (RSE) is equal to 4.902, what is smaller
-than the slope (big difference between the manual and automatic transmission),
-but is even higher than the standard error of both. This means that not all 
-observations can be well fitted, but is so (as we saw in the p-value) a good
-linear approximation.
-
-<p> The power of explain the data by the model, otherwise, can be analyzed 
-with the value of  Multiple R-squared and Adjusted R-squared, with both with 
-values next to 0.33 (0.3598 to the first and 0.3385 to the second), so,
-the linear model can explain round of one third of the variation in the data.
-This means that _am_ alone can brings some information about the mpg, but
-is not a good idea to generalize the model, being that we have more variables 
-to increase the power of explanation of the model, even with a small number of 
-observations.
-
-<p> *So*, we can't assume that automatic transmissions is better than manual 
-transmissions, being that round 33% of the data can be explained by this
-relationship.
-
+<p> Is expected that the values of mpg for automatic transmission be around 
+17.147 $\pm$ 1.125 and the cost to change the transmission for manual is equal 
+to 7.245, getting around 24.392 $\pm$ 1.764 for manual transmission. The result 
+of t-test results in a P-value very low for transmissions, what is good. 
+The results of Multiple $R^2$ and Adjusted $R^2$, says that the linear model 
+can explain round of one third of the variation in the data, so _am_ alone 
+brings some information about the mpg, but is better add more variables.
 
 ### Multivariable Linear Regression
-<p> How one explanatory variable can't bring relevant information, we will
-analyze one new model with more than one explanatory variable. 
-
 <p> First, we need to find the most important variables to put on a new model.
 This can be done using variables with significant correlation with mpg, but 
 well uncorrelated between itselfs. The correlation table can draw some insights 
-to understand the pattern, else can be done a model with all variables and, 
-with him, extract that with lower p-values on t-test.
+to understand the pattern (apendix, figure 2), else can be done a model with 
+all variables and, with him, extract that with lower p-values on t-test.
 ```{r}
-summary(lm(mpg ~., mtcars))$coefficients
+coefs <- summary(lm(mpg ~., mtcars))$coefficients
+coefs[coefs[,4] < 0.35,4]
 ```
-<p> As we can see, the most influencible variables are wt, qsec and hp (plus 
-am). Now we'll build two models, one with these 4 variables and another without
-hp. They will be compared to the first fit to see if exists some significance 
-adding hp or not.
+<p> As we can see, the most influencible variables (lower p-values) are wt 
+(Weigth in 1000 lbs), qsec (1/4 mile time) and hp (Gross horsepower), plus am. 
+Now we'll build one model with these 4 variables and another 
+without hp. Then is used a ANOVA to find the model with lower p-value for F-test
+and get his results.
 ```{r}
 mult_fit <- lm(mpg ~ factor(am) + wt + qsec, data = mtcars)
 mult_fit_hp <- lm(mpg ~ factor(am) + wt + qsec + hp, data = mtcars)
 
-anova(fit, mult_fit, mult_fit_hp)
-```
-<p> The model without hp has higher F, so lower p-value. Let's show summary of 
-the model:
-```{r}
-summary(mult_fit)
+p_values <- anova(fit, mult_fit, mult_fit_hp)$`Pr(>F)`[2:3]
+message("P-Value without hp(", p_values[1], ")", 
+        "\nis lower than the P-Value with hp(", p_values[2], ")")
+
+summary(mult_fit)$coefficients
+message("R Squared:", summary(mult_fit)$r.squared, "\nAdjusted R Squared:", 
+        summary(mult_fit)$adj.r.squared)
 ```
 <p> The results say that qsec and wt were added well in the model, with low 
 p-values. The R-squared and adjusted R-square grows to aprox. 0.85 and 0.83, 
-respectively. The p value from F-statistic was too very low.
-<p> About the residuals, they showed no relevant problems. Compared with
-the fitted values, they had well distribution whitout relevant pattern. They 
-yet tended to a linear tendence in normal QQ plot (a slow senoidal pattern can
-be detected, but is not something so anormal). The other residual plots show not
-a tendence too, being spaced in the plots.
+respectively.
+<p> About the residuals (apendix, figure 3), they showed no relevant problems. 
+Compared with the fitted values, they had well distribution whitout 
+relevant pattern. They yet tended to a linear tendence in normal QQ plot 
+(a slow senoidal pattern can be detected, but is not something so anormal). 
+The other residual plots show not a tendence too, being spaced in the plots.
 
 ## Conclusions
 <p> As can be derived by the analysis of the boxplot of the data and by the 
@@ -164,25 +93,40 @@ be better than manual transmissions for mpg. Analyzing the trend of mpg just
 with the fact to be manual or automatic don't shows an information with good 
 confidence.
 
-<p> The trend of the chosen model is that automatic tranmission starts with
-9.6178 of mpg and increases/decreases with the values of wt and qsec. 
-Manual transmissions, in other side, have a start increasedn om 2.9358 mpg, so,
-starts with 12.5536 and change the value by the values of qsec and wt.
-
 <p> So, mpg can be calculated as: mpg = 9.6175 + 2.9358$*$am - 
 3.9165$*$wt + 1.2259$*$qsec, where am = 0 for automatic transmission and 1 for 
-manual transmission.
+manual transmission. The trend of the chosen model is that automatic tranmission
+starts with 9.6178 of mpg and increases/decreases with the values of wt and qsec. 
+Manual transmissions, in other side, have a start increased in 2.9358 mpg, so,
+starts with 12.5536 and change the value by the values of qsec and wt.
 
 ## Apendix
-<p> mtcars attributes
-[, 1]	mpg	Miles/(US) gallon
-[, 2]	cyl	Number of cylinders
-[, 3]	disp	Displacement (cu.in.)
-[, 4]	hp	Gross horsepower
-[, 5]	drat	Rear axle ratio
-[, 6]	wt	Weight (1000 lbs)
-[, 7]	qsec	1/4 mile time
-[, 8]	vs	Engine (0 = V-shaped, 1 = straight)
-[, 9]	am	Transmission (0 = automatic, 1 = manual)
-[,10]	gear	Number of forward gears
-[,11]	carb	Number of carburetors
+
+```{r warning=FALSE, message=FALSE, fig.width=4, fig.height=4, fig.align='center',fig.cap="mpg X Transmission Boxplot"}
+library(ggplot2)
+library(dplyr)
+
+mtcars$am <- if_else(mtcars$am == 0, true = "auto", false = "manual")
+
+ggplot(mtcars) + 
+  geom_boxplot(aes(x = am, y = mpg, group = am)) + 
+  labs(x = "Transmission",
+       y = "Milles per gallon (mpg)")
+```
+
+```{r warning=FALSE, message=FALSE, fig.width=8, fig.height=8, fig.align='center',fig.cap="Correlation Table"}
+library(corrplot)
+data("mtcars")
+
+corrplot(cor(mtcars), 
+         method = "color",
+         type = "upper", 
+         addCoef.col = TRUE,
+         diag = FALSE,
+         number.cex = 0.9)
+```
+
+```{r, fig.align='center',fig.cap="Residuals plots (multivariable model)"}
+par(mfrow = c(2,2))
+plot(mult_fit)
+```
