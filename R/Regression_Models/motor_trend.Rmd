@@ -148,6 +148,30 @@ the model:
 ```{r}
 summary(mult_fit)
 ```
+<p> The results say that qsec and wt were added well in the model, with low 
+p-values. The R-squared and adjusted R-square grows to aprox. 0.85 and 0.83, 
+respectively. The p value from F-statistic was too very low.
+<p> About the residuals, they showed no relevant problems. Compared with
+the fitted values, they had well distribution whitout relevant pattern. They 
+yet tended to a linear tendence in normal QQ plot (a slow senoidal pattern can
+be detected, but is not something so anormal). The other residual plots show not
+a tendence too, being spaced in the plots.
+
+## Conclusions
+<p> As can be derived by the analysis of the boxplot of the data and by the 
+pattern **with other variables** showed before, automatic transmission tends to 
+be better than manual transmissions for mpg. Analyzing the trend of mpg just 
+with the fact to be manual or automatic don't shows an information with good 
+confidence.
+
+<p> The trend of the chosen model is that automatic tranmission starts with
+9.6178 of mpg and increases/decreases with the values of wt and qsec. 
+Manual transmissions, in other side, have a start increasedn om 2.9358 mpg, so,
+starts with 12.5536 and change the value by the values of qsec and wt.
+
+<p> So, mpg can be calculated as: mpg = 9.6175 + 2.9358$*$am - 
+3.9165$*$wt + 1.2259$*$qsec, where am = 0 for automatic transmission and 1 for 
+manual transmission.
 
 ## Apendix
 <p> mtcars attributes
