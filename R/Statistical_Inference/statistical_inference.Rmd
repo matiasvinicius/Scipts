@@ -1,0 +1,25 @@
+---
+title: 'Statistical Inference'
+subtitle: 'Central Limit Theorem review and some inference about teeth grow'
+author: "MATIAS, V. A."
+date: "05/04/2021"
+output: pdf_document
+---
+
+# Overview
+
+# Simulation
+
+## Sample Mean versus Theoretical Mean
+
+## Sample Variance versus Theoretical Variance
+
+## Distribution
+
+# Teeth
+
+## Data
+
+## Inference
+
+# Conclusions
