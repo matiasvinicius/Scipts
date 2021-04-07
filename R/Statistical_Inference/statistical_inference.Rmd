@@ -1,75 +1,203 @@
 ---
 title: 'Statistical Inference'
-subtitle: 'Central Limit Theorem review and some inference about teeth grow'
+subtitle: 'Part 1: Central Limit Theorem review'
 author: "MATIAS, V. A."
 date: "05/04/2021"
 output: pdf_document
 ---
 
 # Overview
-The first part of the report makes one thousand simulations of the exponential 
+The first part of the project makes one thousand simulations of the exponential 
 function to analyzes the Central Limit Theorem application under the means 
-distribution. The second part is focused to applies statistic inference 
-techniques bringing a better understanding of teeth growth.
+distribution. 
 
 
-# 1. Central Limit Theorem
+# Central Limit Theorem
 The Central Limit Theorem (CLT) says that the averages of any distribution 
 tend to the normal as the amount of data grows. The first topic examines 
 this fact.
 
-## 1.1 Simulation
+## Simulation
 We'll create a thousand exponential distributions and extract the means to 
-build a new distribution that should be next to the normal. The exponential 
-distribution is calculated as:
+build a new distribution that should be next to the normal. The probability
+density function (pdf) of the exponential distribution is calculated as:
 
 $f(x) = \lambda {e}^{- \lambda x}$
 
 Where:
 
-* $\lambda$ = mean/variance of the data, being that both variance and mean 
-are the same in a Poisson Distribution
+* $\lambda$ = average rate parameter;
 
-* _x_ = The numeric data related to the observations
+* _x_ = Random variable (numeric).
 
 In this report will be created 1000 of these distributions. Each of them has 
-40 random values, and lambda equals 0.2, so the formula can be adapted to 
-$f(x) = 0.2 {e}^{- 0.2 x}$. The code chunk below extracts the means of each of 
+40 random variables, and lambda equals 0.2, so the formula can be adapted to 
+$f(x) = 0.2 {e}^{- 0.2 * x}$. The code chunk below extracts the means of each of 
 the exponential distributions, store them and plot the means distribution 
 plot.
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, fig.cap='Averages PDF', fig.align='center', fig.height=5, fig.width=8, echo=FALSE}
 library(ggplot2)
+
+n <- 40
+lambda <- 0.2
 
 mns <- c()
 for (i in seq(1000)) {
-  mns <- c(mns, mean(rexp(n = 40, rate = 0.2)))
+  mns <- c(mns, mean(rexp(n, lambda)))
 }
 
+pdf <- ggplot() + 
+  geom_density(aes(x = mns)) + 
+  xlab("Means") +
+  geom_vline(aes(xintercept = mean(mns), color = "Sample Mean"),
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = 1/lambda, color = "Theoretical Mean"),
+             linetype = "dashed") +
+  scale_color_manual(name = "Legend", 
+                     values = c("Sample Mean" = "green", "Theoretical Mean" = "red"))
+
+
+pdf
+```
+Given the random data, all simulations will result in curves with little 
+differences. However, every simulation will return an approximately 
+normal distribution.
+
+## Sample statistics  X Theoretical statistics
+The plot above shows the sample mean and the theoretical mean. You can see that 
+it differs, but both are very close. Sample variance and theoretical variance 
+follow the same idea, look at the simulation results for means and variances.
+```{r echo=FALSE}
+theor_mean <- 1/lambda
+smp_mean <- mean(mns)
+theor_var <- (1/lambda^2)/n
+smp_var <- var(mns)
+
+message("Theoretical Mean: ", theor_mean,
+        "\nSample Mean: ", smp_mean,
+        "\nTheoretical Variance: ", theor_var,
+        "\nSample Variance: ", smp_var)
+```
+
+The theoretical mean (in other words, the expected value) for exponential 
+distribution is calculated as 
+$E(X) = 1/\lambda$ and the variance as $Var(X) = (1/\lambda^2)/n$, 
+so, this results will be constant for the same values of $\lambda$ and n.
+
+For one thousand simulations, the sample mean will be very close to 
+the theoretical mean of 5 (that is, 1/0.2), with a difference close to 2 
+decimal places for most of the simulations made. The sample variance should be 
+next to the theoretical too. This makes sense because we run a lot of 
+simulations, and this can reduce the relevance of many outliers.
+
+
+## 1.3. Distribution
+To understand how the distribution of the averages is close to the normal, 
+look at the plot below.
+
+The line that follows the histogram is the normal for the theoretical mean and 
+standard deviation. Even with variations of the original curve, the data 
+follow a normal distribution because they have a high concentration of 
+averages around the average of the distribution, while divergent values become 
+less likely as standard deviations from the mean increase.
+\newpage
+
+```{r echo=FALSE, fig.cap='Histogram of the data and the normal curve of the theoretical distribution', fig.height=4, fig.width=8}
 ggplot() + 
-  geom_density(aes(x = mns), col = "red") + 
-  geom_density(col = 'blue',aes(rnorm(1000, mean = mean(mns), sd = sd(mns)))) 
+  geom_histogram(aes(mns, ..density..), 
+                 binwidth = lambda) + 
+  xlab("Means") +
+  stat_function(fun=dnorm,
+                color="red",
+                args = list(mean = theor_mean,
+                            sd = sqrt(theor_var)))
 ```
 
-```{r, warning=FALSE, message=FALSE}
-library(dplyr)
-testt <- t.test(mns, conf.level = 0.95)$conf.int
-incon <- mean(mns) + c(1,-1) * qnorm(0.025) * sd(mns)/sqrt(length(mns))
+To clarify the change, the third plot shows the comparison between the 
+distribution of the means and one of the exponential function results 
+(n = 40, lambda = 0.2) 
+```{r echo=FALSE, fig.align='center', fig.height=3, fig.width=8, fig.cap='Comparison between the distribution of means and one distribution of the exponential function'}
+exp_results <- rexp(n, lambda)
 
-length(mns[mns > testt[1] & mns < testt[2]])
-
+ggplot() + geom_density(aes(mns, color = 'Averages PDF')) + 
+  geom_density(aes(exp_results,color = 'Exponential Function')) +
+    scale_color_manual(values = c('Averages PDF' = 'red', 
+                                  'Exponential Function' = 'blue')) +
+  xlab("x")
 ```
 
-## Sample Mean versus Theoretical Mean
+As the exponential distribution has lambda 0.2, the average of this 
+distribution must be close to 5, which is notable for the graph. However, 
+the values vary for different values of x, causing a decrease/increase as 
+new simulations are carried out. Making many distributions and collecting 
+their averages, therefore, it is visible that the lower / higher values will 
+be less frequent, causing a concentration of averages, but liable to more 
+extreme values with a lower probability of occurrence.
 
-## Sample Variance versus Theoretical Variance
+\newpage
+# Apendix
 
-## Distribution
+```{r, warning=FALSE, message=FALSE, fig.show='hide'}
+#Figure 1 code
+library(ggplot2)
 
-# Teeth
+n <- 40
+lambda <- 0.2
 
-## Data
+mns <- c()
+for (i in seq(1000)) {
+  mns <- c(mns, mean(rexp(n, lambda)))
+}
 
-## Inference
+pdf <- ggplot() + 
+  geom_density(aes(x = mns)) + 
+  xlab("Means") +
+  geom_vline(aes(xintercept = mean(mns), color = "Sample Mean"),
+             linetype = "dashed") +
+  geom_vline(aes(xintercept = 1/lambda, color = "Theoretical Mean"),
+             linetype = "dashed") +
+  scale_color_manual(name = "Legend", 
+                     values = c("Sample Mean" = "green", "Theoretical Mean" = "red"))
 
-# Conclusions
+
+pdf
+```
+
+```{r message=FALSE}
+#means and variances code
+theor_mean <- 1/lambda
+smp_mean <- mean(mns)
+theor_var <- (1/lambda^2)/n
+smp_var <- var(mns)
+
+message("Theoretical Mean: ", theor_mean,
+        "\nSample Mean: ", smp_mean,
+        "\nTheoretical Variance: ", theor_var,
+        "\nSample Variance: ", smp_var)
+```
+
+```{r fig.align='center', fig.show='hide'}
+#Figure 2 code
+ggplot() + 
+  geom_histogram(aes(mns, ..density..), 
+                 binwidth = lambda) + 
+  xlab("Means") + 
+  stat_function(fun=dnorm,
+                color="red",
+                args = list(mean = theor_mean,
+                            sd = sqrt(theor_var)))
+```
+
+```{r fig.align='center', fig.show='hide'}
+#Figure 3 code
+exp_results <- rexp(n, lambda)
+
+ggplot() + geom_density(aes(mns, color = 'Averages PDF')) + 
+  geom_density(aes(exp_results,color = 'Exponential Function')) +
+    scale_color_manual(values = c('Averages PDF' = 'red', 
+                                  'Exponential Function' = 'blue')) +
+  xlab("x")
+```
+
+
