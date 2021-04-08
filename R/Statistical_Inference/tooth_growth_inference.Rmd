@@ -1,0 +1,196 @@
+---
+title: "Statistical Inference"
+author: "MATIAS, V. A."
+date: "07/04/2021"
+output: pdf_document
+subtitle: 'Part 2: Basic Inferential Data Analysis about tooth growth '
+---
+
+# Overview 
+The second part of the project analyzes the dataset ToothGrowth and does 
+some exploratory data analysis, and applies basic statistical inference to 
+bring some information.
+
+# Data
+The dataset has 60 rows and 3 columns (appendix, chunk code 1). 
+Each line has the length of the odontoblasts in the study 
+(cell responsible for the growth of the teeth), the supplement used and the 
+size of the dose (0.5, 1 or 2mg / day). The study was carried out on guinea 
+pigs. Let's look at a random sample of 6 tuples.
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library('dplyr')
+data('ToothGrowth')
+
+sample_n(ToothGrowth, size = 6)
+```
+
+Where:
+
+* len: numeric	Tooth length
+* supp: Supplement type. OJ is Orange Juice, and VC is ascorbic acid (a form 
+of Vitamin C)
+* dose: Dose in milligrams/day
+
+There are 30 observations for each of the supplements, as well as 20 for each 
+of the doses. This allows you to analyze the distribution of the data using 
+the histogram below (Figure 1).
+
+The graph shows that there is not a big difference between supplies when the 
+dose is equal to 2mg / day. For the other doses, however, greater growth is 
+noticeable when the supply is orange juice. Even so, the data show that there 
+is an expected trend that increasing the dose leads to greater length 
+of odontoblasts.
+
+\newpage
+
+```{r, echo=FALSE,warning=FALSE, message=FALSE, fig.align='center', fig.height=4, fig.width=5, fig.cap='Tooth growth (in odontoblasts) for different doses and supplements of Vitamin C'}
+library(ggplot2)
+
+ToothGrowth <- ToothGrowth %>%
+  mutate(supp = if_else(supp == 'OJ', 
+                        true = 'Orange Juice',
+                        false = 'Ascorbic Acid'))
+
+ggplot(ToothGrowth) +
+  geom_bar(aes(x = as.factor(dose), y = len), stat = 'identity') +
+  facet_wrap(~supp) +
+  labs(x = 'Dose of Vitamin C (mg/day)',
+       y = 'Length of odontoblasts (sum)')
+```
+# Inference
+To begin, let's analyze the length distribution of odontoblasts looking only at
+supplements. The blue lines in figure 2 represent the 99% confidence interval. 
+Mean values and confidence intervals are also reported.
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.align='center', fig.height=5, fig.width=10, fig.cap='Length distribution of odontoblasts for orange juice supplement (orange line) and Ascorbic Acid (red line)'}
+library(gridExtra)
+
+vc <- ToothGrowth %>%
+  filter(supp == 'Ascorbic Acid')
+
+oj <- ToothGrowth %>%
+  filter(supp == 'Orange Juice') 
+
+stats_oj <- summary(oj$len)
+stats_vc <- summary(vc$len)
+
+conf_oj <- mean(oj$len) + c(-1, 1) * qnorm(0.99) * sd(oj$len) / sqrt(length(oj))
+conf_vc <- mean(vc$len) + c(-1, 1) * qnorm(0.99) * sd(vc$len) / sqrt(length(oj))
+
+plot_oj <- ggplot() + 
+  geom_density(aes(len), oj, color = 'orange') + 
+  geom_vline(xintercept = conf_oj, color = 'blue', linetype ='dashed')
+
+plot_vc <-ggplot() +
+  geom_density(aes(len), vc, color = 'red') + 
+  geom_vline(xintercept = conf_vc, color = 'blue', linetype ='dashed')
+
+
+grid.arrange(plot_oj, plot_vc, nrow=1)
+```
+
+```{r echo=FALSE}
+message("Average length for Orange Juice: ", round(mean(oj$len), digits = 2),
+        "\nAverage length for Ascorbic Acid: ", round(mean(vc$len, digits = 2)),
+        "\n99% confidence interval for Orange Juice: ", round(conf_oj[1], digits = 2),
+        " - ", round(conf_oj[2], digits = 2),
+        "\n99% confidence interval for Ascorbic Acid: ", round(conf_vc[1], digits = 2), 
+        " - ", round(conf_vc[2], digits = 2))
+```
+
+As there is not much data (20 for each distribution), it is not possible to 
+assume and generalize a normality, however, there is a large concentration of 
+data close to the average of the distributions and few values beyond the level 
+of significance, indicating a possible trend. Still, lower values of length are 
+more common in the distribution of orange juice, considering its average and, 
+mainly, the lower limit of the confidence interval. The distribution for 
+Ascorbic Acid contrasts with the former for the higher density (consequently, 
+probability) of values close to a high average.
+
+```{r}
+
+t.test(oj$len, vc$len, conf.level = 0.99, alternative = 'greater')
+
+
+```
+
+# Conclusions
+
+
+# Appendix
+
+```{r, message=FALSE, warning=FALSE, eval=FALSE, fig.cap='Code to load data'}
+# Chunk code 1: getting the data
+library('dplyr')
+
+data('ToothGrowth')
+
+dim(ToothGrowth) # 60 rows X 3 columns
+
+sample_n(ToothGrowth, size = 6) # sample of six tuples
+
+?ToothGrowth # about the data
+```
+
+```{r, eval=FALSE, warning=FALSE, message=FALSE, fig.show='hide'}
+# Figure 1 code
+library(ggplot2)
+
+table(ToothGrowth$supp) # both supplements have 30 observations
+table(ToothGrowth$dose) # 20 observations for each of the three doses
+
+
+# Changing OJ and VC to orange juice and ascorbic acid
+ToothGrowth <- ToothGrowth %>%
+  mutate(supp = if_else(supp == 'OJ', 
+                        true = 'Orange Juice',
+                        false = 'Ascorbic Acid'))
+
+
+#plot
+ggplot(ToothGrowth) +
+  geom_bar(aes(x = as.factor(dose), y = len), stat = 'identity') +
+  facet_wrap(~supp) +
+  labs(x = 'Level of Vitamin C (mg/day)',
+       y = 'Length of odontoblasts (sum)')
+
+```
+
+```{r warning=FALSE, message=FALSE, fig.show='hide'}
+# Figure 2 code
+library(gridExtra)
+
+vc <- ToothGrowth %>%
+  filter(supp == 'Ascorbic Acid')
+
+oj <- ToothGrowth %>%
+  filter(supp == 'Orange Juice') 
+
+stats_oj <- summary(oj$len)
+stats_vc <- summary(vc$len)
+
+conf_oj <- mean(oj$len) + c(-1, 1) * qnorm(0.99) * sd(oj$len) / sqrt(length(oj))
+conf_vc <- mean(vc$len) + c(-1, 1) * qnorm(0.99) * sd(vc$len) / sqrt(length(oj))
+
+plot_oj <- ggplot() + 
+  geom_density(aes(len), oj, color = 'orange') + 
+  geom_vline(xintercept = conf_oj, color = 'blue', linetype ='dashed')
+
+plot_vc <-ggplot() +
+  geom_density(aes(len), vc, color = 'red') + 
+  geom_vline(xintercept = conf_vc, color = 'blue', linetype ='dashed')
+
+
+grid.arrange(plot_oj, plot_vc, nrow=1)
+```
+
+```{r eval=FALSE}
+# Chunk code 2: Statistics
+message("Average length for Orange Juice: ", round(mean(oj$len), digits = 2),
+        "\nAverage length for Ascorbic Acid: ", round(mean(vc$len, digits = 2)),
+        "\n99% confidence interval for Orange Juice: ", round(conf_oj[1], digits = 2),
+        " - ", round(conf_oj[2], digits = 2),
+        "\n99% confidence interval for Ascorbic Acid: ", round(conf_vc[1], digits = 2), 
+        " - ", round(conf_vc[2], digits = 2))
+```
