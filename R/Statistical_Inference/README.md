@@ -11,4 +11,4 @@ There are four files:
 - tooth_growth_inference.Rmd: Contains the scripts and descriptions that create the second report through R Markdown;
 - tooth_growth_inference.pdf : Second PDF report generated from the .Rmd file using the `knitr()` function in R.
 
-You can also access the report on [RPubs](https://rpubs.com/viamatias/tooth_growth).
+You can also access the [Tooth Growth report](https://rpubs.com/viamatias/tooth_growth) and the [Central Limit Theorem Report](https://rpubs.com/viamatias/clt) on Rpubs.
