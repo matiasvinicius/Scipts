@@ -9,7 +9,7 @@ subtitle: 'Part 2: Basic Inferential Data Analysis about tooth growth '
 # Overview 
 The second part of the project analyzes the dataset ToothGrowth and does 
 some exploratory data analysis, and applies basic statistical inference to 
-bring some information.
+bring relevant information
 
 # Data
 The dataset has 60 rows and 3 columns (appendix, chunk code 1). 
@@ -108,16 +108,73 @@ mainly, the lower limit of the confidence interval. The distribution for
 Ascorbic Acid contrasts with the former for the higher density (consequently, 
 probability) of values close to a high average.
 
-```{r}
+To analyze the influence of the dose regardless of the method used, we 
+will use hypothesis tests. Looking at the histogram in figure 1, we can see 
+that there is a tendency for a larger dose to positively influence the length 
+of the odontoblasts, so we are assuming a null hypothesis that there is no 
+influence on the dose, against an alternative hypothesis that the length of 
+the odontoblasts the 2mg dose is higher than the other two.
 
-t.test(oj$len, vc$len, conf.level = 0.99, alternative = 'greater')
+The other hypothesis test also comes from the analysis of the histogram in 
+figure 1. We can see that there does not seem to be a significant difference 
+between the methods for assessing the length of odontoblasts when the dose is 
+equal to 2. We will test with a null hypothesis that there is no significant 
+difference, against one of which there is a significant difference (greater 
+or lesser). The p-values have been rounded to the fifth decimal place.
 
+```{r echo=FALSE}
+
+dose_half <- ToothGrowth %>%
+  filter(dose == 0.5) 
+dose_one <- ToothGrowth %>%
+  filter(dose == 1.0) 
+dose_two <- ToothGrowth %>%
+  filter(dose == 2.0) 
+
+
+p_value_two_half <- t.test(dose_two$len, dose_half$len, 
+       alternative = 'greater')$p.value
+p_value_two_one <- t.test(dose_two$len, dose_one$len, 
+       alternative = 'greater')$p.value
+p_value_oj_vc <- t.test(oj$len, vc$len)$p.value
+
+message('P-value for 0.5mg dose is more effective than 2mg dose: ', 
+        round(p_value_two_half, digits = 5),
+        '\nP-value for 1mg dose is more effective than 2mg dose: ',
+        format(round(p_value_two_one, digits = 5), scientific = FALSE),
+        '\nP-value for any significant difference between the two methods at 
+        a dose of 2mg: ',
+        round(p_value_oj_vc, digits = 5))
 
 ```
+The p-values for the first two T tests resulted in values very close to 
+zero, demonstrating that, for our data, a dose of 2mg / day is indeed more 
+effective for the growth of odontoblasts compared to the other two.
+
+On the other hand, the p-value of the last T test is not as close to zero as 
+the other two (0.06). As there are approximately 6% of the data varying in the 
+t-distribution tails, there will be an even greater need to measure the result 
+with the level of significance $\alpha$ determined. If $\alpha$ = 0.05, we reject 
+the null hypothesis (that there is no significant variation between the 
+treatment methods for 2mg / day), but if we choose a $\alpha$ = 0.1, this 
+null hypothesis cannot be refuted. Since we don't have a lot of data, it is 
+acceptable to choose a higher level of significance instead of rejecting the 
+hypothesis right away. To reduce $\alpha$, more data will be needed.
 
 # Conclusions
 
+As was analyzed in the previous item, despite the small amount of data, these 
+seem to tend to a normal one within their confidence intervals. The 
+distribution for orange juices has a distribution center close to 20, while 
+the distribution center for Ascorbic Acid is facing 17 (length of odontoblasts).
+The 99% confidence intervals show that there is a greater proportion of low 
+length values for the distribution of Ascorbic Acid.
 
+The hypothesis tests showed that the dose of 2mg/day is more effective and 
+that it is very likely (less than 10% probability given the data) that the 
+supplement influences the length of odontoblasts for a dose equal to 2mg/day
+
+\newpage
 # Appendix
 
 ```{r, message=FALSE, warning=FALSE, eval=FALSE, fig.cap='Code to load data'}
@@ -193,4 +250,30 @@ message("Average length for Orange Juice: ", round(mean(oj$len), digits = 2),
         " - ", round(conf_oj[2], digits = 2),
         "\n99% confidence interval for Ascorbic Acid: ", round(conf_vc[1], digits = 2), 
         " - ", round(conf_vc[2], digits = 2))
+```
+
+```{r eval=FALSE}
+#Chunck code 3: P-values
+
+dose_half <- ToothGrowth %>%
+  filter(dose == 0.5) 
+dose_one <- ToothGrowth %>%
+  filter(dose == 1.0) 
+dose_two <- ToothGrowth %>%
+  filter(dose == 2.0) 
+
+
+p_value_two_half <- t.test(dose_two$len, dose_half$len, 
+       alternative = 'greater')$p.value
+p_value_two_one <- t.test(dose_two$len, dose_one$len, 
+       alternative = 'greater')$p.value
+p_value_oj_vc <- t.test(oj$len, vc$len)$p.value
+
+message('P-value for 0.5mg dose is more effective than 2mg dose: ', 
+        round(p_value_two_half, digits = 5),
+        '\nP-value for 1mg dose is more effective than 2mg dose: ',
+        format(round(p_value_two_one, digits = 5), scientific = FALSE),
+        '\nP-value for any significant difference between the two methods at 
+        a dose of 2mg: ',
+        round(p_value_oj_vc, digits = 5))
 ```
