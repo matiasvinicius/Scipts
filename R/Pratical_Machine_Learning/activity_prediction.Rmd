@@ -1,0 +1,67 @@
+---
+title: "Activity Prediction"
+author: "MATIAS, V. A."
+date: "14/04/2021"
+output: html_document
+---
+
+# Overview
+
+# Data
+
+```{r}
+library('dplyr')
+library('ggplot2')
+library('tidyr')
+library('caret')
+library('rpart')
+library('rpart.plot')
+
+url_train <- 'https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv'
+url_test <- 'https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv'
+
+train <- download.file(url_train, destfile = 'train.csv')
+test <- download.file(url_test, destfile = 'test.csv')
+
+train <- read.csv('train.csv', na.strings=c('NA','#DIV/0!', '')) %>%
+  mutate(as.factor(classe)) 
+  #%>% select_if(colSums(!is.na(.)) == nrow(train))
+
+#Clean train data
+
+total_na <- as.data.frame(colSums(is.na(train))) %>%
+  mutate(Attribute = rownames(.)) %>%
+  as_tibble()
+colnames(total_na)[1] <- 'Frequency'
+na_to_remove <- filter(total_na, Frequency > 0.05*nrow(train))
+summary(na_to_remove)
+
+train <- train %>%
+  select(-na_to_remove$Attribute)
+
+total_na %>%
+  select(-na_to_remove$Attribute) %>%
+  filter(Frequency > 0) %>%
+  nrow()
+
+test <- read.csv('test.csv')
+
+
+indx_train <- createDataPartition(train$classe, p = 0.7, list = FALSE)
+part_train <- train[indx_train,]
+part_test <- train[-indx_train,]
+
+
+
+fit_linear <- train(classe ~., data = train, method = 'glm')
+
+mdl <- rpart(classe ~ ., data=train, method="class")
+prediction <- predict(mdl, part_test, type = "class")
+
+rpart.plot(mdl, main="Classification Tree", extra=102, under=TRUE, faclen=0)
+
+```
+
+# Model
+
+# Conclusions
